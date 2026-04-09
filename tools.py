@@ -36,13 +36,13 @@ def search_criminal_cases(query: str, top_k: int = 3) -> List[dict]:
     scored = []
     for case in cases:
         score = 0
-        # 제목·요약·키워드 매칭으로 단순 점수 계산
-        if any(kw in query_lower for kw in case.get("keywords", [])):
-            score += 3
-        if any(kw in query for kw in case.get("keywords", [])):
-            score += 2
+        # 키워드 매칭 (대소문자 구분 없이)
+        matching_keywords = [kw for kw in case.get("keywords", []) if kw in query_lower]
+        score += len(matching_keywords) * 3
+        # 제목 완전 일치
         if case["title"].replace(" ", "") in query.replace(" ", ""):
             score += 5
+        # 요약 내 단어 포함 여부
         if any(word in case["summary"] for word in query.split()):
             score += 1
         scored.append((score, case))
