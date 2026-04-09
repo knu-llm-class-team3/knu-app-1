@@ -1,6 +1,8 @@
+
 from __future__ import annotations
 
 from typing import TypedDict
+from pprint import pprint
 
 from langgraph.graph import END, START, StateGraph
 
@@ -94,6 +96,9 @@ if __name__ == "__main__":
     for idx, query in enumerate(samples, start=1):
         result = run_test(query)
         print(f"\n[{idx}] 질문: {query}")
+        print(f"state keys: {list(result.keys())}")
+        print("state dump:")
+        pprint(result)
         print(f"분류: {result.get('query_category')}")
         print(f"신뢰도: {result.get('confidence')}")
         print(f"근거: {result.get('reasoning')}")
