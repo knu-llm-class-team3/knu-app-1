@@ -44,7 +44,7 @@ def _save_vector_to_local(vector_store: FAISS):
 # 벡터스토어 로드
 def _load_vector_from_local() -> FAISS:
     load_dotenv()
-    return FAISS.load_local("./exp-faiss", __get_embeddings(), allow_dangerous_deserialization=True)
+    return FAISS.load_local("./exp-faiss", _get_embeddings(), allow_dangerous_deserialization=True)
 
 # 벡터스토어 초기화
 def _init_vector_store():
