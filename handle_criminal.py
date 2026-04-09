@@ -1,4 +1,8 @@
 def handle_criminal(state: LegalSupportState):
+    print("🚨 형사 사건 문제를 처리합니다. 관련 판례를 검색 중입니다...")
+    matched_docs = retrieve_relevant_docs(category="형사", query=user_query)    
+    print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
+
     prompt = f"""
     당신은 20년 경력의 형사 사건 전문 대표 변호사입니다.
     아래 의뢰인의 형사 사건 연루 상황을 분석하고, 검색된 [유사 판례]를 엄격히 근거로 삼아 전문적인 법률 상담을 제공해 주세요.
@@ -7,7 +11,7 @@ def handle_criminal(state: LegalSupportState):
     {state['user_query']}
 
     [검색된 유사 판례 (답변의 핵심 근거)]
-    {state['matched_precedent']}
+    {matched_docs}
 
     반드시 다음 내용을 포함하여 단계별로 답변하세요:
 
