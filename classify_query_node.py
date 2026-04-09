@@ -5,10 +5,10 @@ from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
 from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
 
 load_dotenv()
-ChatOpenAI = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
-LegalCategory = Literal["criminal", "civil", "administrative", "family"]
+LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknown"]
 
 
 class LegalSupportState(TypedDict, total=False):
@@ -31,10 +31,7 @@ def classify_legal_query(state: LegalSupportState) -> LegalSupportState:
 			"reasoning": "입력 질문이 비어 있습니다.",
 		}
 
-
-	try:
-		llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-		prompt = f"""
+	prompt = f"""
             너는 한국 최고의 변호사이다.
             아래 사용자 질문을 다음 4개 중 하나로만 분류해라:
             - criminal: 형사
@@ -50,32 +47,27 @@ def classify_legal_query(state: LegalSupportState) -> LegalSupportState:
 
             질문: {query}
         """
-		raw = llm.invoke(prompt).content.strip()
+	raw = llm.invoke(prompt).content.strip()
 
-		parts = [p.strip() for p in raw.split("|", maxsplit=2)]
-		if len(parts) == 3:
-			category_raw, confidence_raw, reasoning = parts
-			category = category_raw.lower()
-			if category not in {"criminal", "civil", "administrative", "family"}:
-				category = "unknown"
-			try:
-				confidence = float(confidence_raw)
-			except ValueError:
-				confidence = 0.6
-			confidence = max(0.0, min(1.0, confidence))
+	parts = [p.strip() for p in raw.split("|", maxsplit=2)]
+	if len(parts) != 3:
+		return {
+			"query_category": "unknown",
+			"confidence": 0.0,
+			"reasoning": "출력 형식이 올바르지 않습니다. expected: category|confidence|reasoning",
+		}
 
-			return {
-				"query_category": category,  # type: ignore[typeddict-item]
-				"confidence": round(confidence, 2),
-				"reasoning": reasoning,
-			}
-	except Exception:
-		pass
+	category_raw, confidence_raw, reasoning = parts
+	category = category_raw.lower()
+	if category not in {"criminal", "civil", "administrative", "family"}:
+		category = "unknown"
 
-	category, confidence, reasoning = _keyword_fallback_classification(query)
+	confidence = float(confidence_raw)
+	confidence = max(0.0, min(1.0, confidence))
+
 	return {
 		"query_category": category,
-		"confidence": confidence,
+		"confidence": round(confidence, 2),
 		"reasoning": reasoning,
 	}
 
