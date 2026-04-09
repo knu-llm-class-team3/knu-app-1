@@ -1,6 +1,9 @@
+from vector_store import retrieve_relevant_docs
+from classify_query_node import LegalSupportState
+
 def handle_criminal(state: LegalSupportState):
     print("🚨 형사 사건 문제를 처리합니다. 관련 판례를 검색 중입니다...")
-    matched_docs = retrieve_relevant_docs(category="형사", query=user_query)    
+    matched_docs = retrieve_relevant_docs(category="형사", query=state.get("user_query", ""))    
     print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
 
     prompt = f"""
