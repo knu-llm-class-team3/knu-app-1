@@ -13,6 +13,7 @@ def criminal_node(state: LegalSupportState) -> LegalSupportState:
     result = handle_criminal(state)
     return {
         "answer": result.get("answer", "[형사 노드] 답변 생성에 실패했습니다."),
+        "matched_docs": result.get("matched_docs", ""),
     }
 
 
@@ -95,4 +96,5 @@ if __name__ == "__main__":
         print(f"분류: {result.get('query_category')}")
         print(f"신뢰도: {result.get('confidence')}")
         print(f"근거: {result.get('reasoning')}")
+        print(f"검색 판례: {result.get('matched_docs')}")
         print(f"응답: {result.get('answer')}")

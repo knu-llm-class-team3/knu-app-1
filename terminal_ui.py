@@ -26,13 +26,26 @@ def run_once(graph, query: str) -> None:
     dt = (time.perf_counter() - t0) * 1000
 
     print()
-    print(f"질문: {query}")
-    print(f"분류: {result.get('query_category')}")
-    print(f"신뢰도: {result.get('confidence')}")
-    print(f"근거: {result.get('reasoning')}")
-    print(f"응답: {result.get('answer')}")
+    print("질문:")
+    print(query)
+    print("====")
+    print("분류:")
+    print(result.get("query_category"))
+    print("====")
+    print("신뢰도:")
+    print(result.get("confidence"))
+    print("====")
+    print("근거:")
+    print(result.get("reasoning"))
+    print("====")
+    print("검색 판례:")
+    print(result.get("matched_docs"))
+    print("====")
+    print("응답:")
+    print(result.get("answer"))
+    print("====")
     print(f"처리시간: {dt:.1f}ms")
-    print("-" * 68)
+    print("=" * 68)
 
 
 def run_samples(graph) -> None:
