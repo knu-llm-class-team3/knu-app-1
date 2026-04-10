@@ -7,3 +7,4 @@ langchain-ollama
 dotenv
 faiss-cpu
 pydantic
+streamlit
