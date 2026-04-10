@@ -31,8 +31,7 @@ def family_node(state: LegalSupportState) -> LegalSupportState:
 
     print("[실행] 가정/가사 전문 변호사 답변 생성 중...")
 
-    prompt =
-    f"""
+    prompt = f"""
     당신은 20년 경력의 이혼 및 가사 사건 전문 대표 변호사입니다.
     아래 의뢰인의 가사 분쟁 상황을 분석하고, 검색된 [유사 판례]를 엄격히 근거로 삼아 전문적인 법률 상담을 제공해 주세요.
 
@@ -51,6 +50,7 @@ def family_node(state: LegalSupportState) -> LegalSupportState:
 
     어려운 법률 용어는 일반인인 의뢰인이 이해하기 쉽게 풀어서 설명하고, 전체적인 어조는 신뢰감을 주면서도 따뜻하고 단호하게 작성하세요.
     """
+    
 
     # model.invoke -> llm.invoke 로 변경 (이전 코드 블록 기준)
     response = model.invoke(prompt).content
