@@ -21,7 +21,8 @@ LLM은 환경 변수에 따라 OpenAI 또는 Groq 모델을 사용하고, 임베
 - Pydantic
 - Ollama 모델: nomic-embed-text-v2-moe
 - LLM 모델: OpenAI gpt-5-mini 또는 Groq openai/gpt-oss-20b
-- Docker 
+- Docker
+- Streamlit
 # 프로젝트에서 잘한 점
 
 # 프로젝트에서 아쉬운 점
