@@ -9,7 +9,6 @@ from config import _get_embeddings
 
 # csv 파일 로드
 def _load_documents()->List[Document]:
-
     loader = CSVLoader(
         file_path="./lib/precedent.csv",
         encoding='utf-8',
@@ -37,7 +36,6 @@ def _save_vector_to_local(vector_store: FAISS):
 
 # 벡터스토어 로드
 def _load_vector_from_local() -> FAISS:
-    load_dotenv()
     return FAISS.load_local("./exp-faiss", _get_embeddings(), allow_dangerous_deserialization=True)
 
 # 벡터스토어 초기화
