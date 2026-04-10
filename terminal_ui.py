@@ -4,6 +4,7 @@ import time
 
 from test_langgraph import build_graph
 
+# email import
 from email_utils import send_legal_consultation_email
 
 def print_header() -> None:
