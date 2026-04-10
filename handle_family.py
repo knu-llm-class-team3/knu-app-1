@@ -1,20 +1,7 @@
 from __future__ import annotations
-
-import os
-from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
-from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
-from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
-
 from vector_store import retrieve_relevant_docs
 from classify_query_node import LegalSupportState
-
-load_dotenv()
-
-def _build_model():
-    if os.getenv("OPENAI_API_KEY"):
-        return ChatOpenAI(model="gpt-5-mini", temperature=0)
-    return ChatGroq(model="openai/gpt-oss-20b", temperature=0)
-
+from config import _build_model
 
 model = _build_model()
 

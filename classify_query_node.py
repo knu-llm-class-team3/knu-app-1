@@ -1,18 +1,8 @@
 from __future__ import annotations
 from pydantic import BaseModel, Field
-import os
 from typing import Literal, TypedDict
-from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
-from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
-from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
+from config import _build_model
 
-load_dotenv()
-
-
-def _build_llm():
-	if os.getenv("OPENAI_API_KEY"):
-		return ChatOpenAI(model="gpt-5-mini", temperature=0)
-	return ChatGroq(model="openai/gpt-oss-20b", temperature=0)
 
 # ── 분류 스키마 ───────────────────────────────────────────────────────────────
 class QueryClassification(BaseModel):
@@ -22,7 +12,7 @@ class QueryClassification(BaseModel):
     reasoning: str = Field(description="해당 카테고리를 선택한 기술적 판단 근거")
     confidence: float = Field(description="분류의 신뢰도 0~1 사이의 값")
 
-model = _build_llm()
+model = _build_model()
 
 LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknown"]
 

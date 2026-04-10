@@ -2,7 +2,6 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents.base import Document
 from langchain_community.document_loaders import CSVLoader
-from langchain_ollama import OllamaEmbeddings
 from typing import List
 from config import _get_embeddings
 
