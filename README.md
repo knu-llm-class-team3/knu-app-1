@@ -4,7 +4,19 @@
 docker - ollama - nomic-embed-text-v2-moe 실행 필요
 
 # 프로젝트 기술 스택
-
+Python 3
+LangChain
+LangGraph
+LangChain OpenAI
+LangChain Groq
+LangChain Community (CSVLoader, FAISS VectorStore)
+LangChain Ollama (OllamaEmbeddings)
+FAISS (faiss-cpu)
+python-dotenv (dotenv)
+Pydantic
+Ollama 모델: nomic-embed-text-v2-moe
+LLM 모델: OpenAI gpt-5-mini 또는 Groq openai/gpt-oss-20b
+Docker 
 # 프로젝트에서 잘한 점
 
 # 프로젝트에서 아쉬운 점
