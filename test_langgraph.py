@@ -1,54 +1,48 @@
 
 from __future__ import annotations
 
-from typing import TypedDict
 from pprint import pprint
 
 from langgraph.graph import END, START, StateGraph
 
-from classify_query_node import classify_legal_query, route_by_legal_category
+from classify_query_node import LegalSupportState, classify_legal_query, route_by_legal_category
+from handle_criminal import handle_criminal
 
 
-class AgentState(TypedDict, total=False):
-    user_query: str
-    query_category: str
-    confidence: float
-    reasoning: str
-    answer: str
-
-
-def criminal_node(state: AgentState) -> AgentState:
+def criminal_node(state: LegalSupportState) -> LegalSupportState:
+    result = handle_criminal(state)
     return {
-        "answer": f"[형사 노드] 질문 접수: {state.get('user_query', '')}",
+        "answer": result.get("answer", "[형사 노드] 답변 생성에 실패했습니다."),
+        "matched_docs": result.get("matched_docs", ""),
     }
 
 
-def civil_node(state: AgentState) -> AgentState:
+def civil_node(state: LegalSupportState) -> LegalSupportState:
     return {
         "answer": f"[민사 노드] 질문 접수: {state.get('user_query', '')}",
     }
 
 
-def administrative_node(state: AgentState) -> AgentState:
+def administrative_node(state: LegalSupportState) -> LegalSupportState:
     return {
         "answer": f"[행정 노드] 질문 접수: {state.get('user_query', '')}",
     }
 
 
-def family_node(state: AgentState) -> AgentState:
+def family_node(state: LegalSupportState) -> LegalSupportState:
     return {
         "answer": f"[가정/가사 노드] 질문 접수: {state.get('user_query', '')}",
     }
 
 
-def unknown_node(state: AgentState) -> AgentState:
+def unknown_node(state: LegalSupportState) -> LegalSupportState:
     return {
         "answer": "[unknown 노드] 질문을 분류하지 못했습니다. 질문을 더 구체적으로 입력해 주세요.",
     }
 
 
 def build_graph():
-    builder = StateGraph(AgentState)
+    builder = StateGraph(LegalSupportState)
 
     builder.add_node("classify", classify_legal_query)
     builder.add_node("criminal_node", criminal_node)
@@ -79,7 +73,7 @@ def build_graph():
     return builder.compile()
 
 
-def run_test(query: str) -> AgentState:
+def run_test(query: str) -> LegalSupportState:
     graph = build_graph()
     return graph.invoke({"user_query": query})
 
@@ -102,4 +96,5 @@ if __name__ == "__main__":
         print(f"분류: {result.get('query_category')}")
         print(f"신뢰도: {result.get('confidence')}")
         print(f"근거: {result.get('reasoning')}")
+        print(f"검색 판례: {result.get('matched_docs')}")
         print(f"응답: {result.get('answer')}")

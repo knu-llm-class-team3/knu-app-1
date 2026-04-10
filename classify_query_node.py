@@ -1,76 +1,59 @@
 from __future__ import annotations
-
+from pydantic import BaseModel, Field
+import os
 from typing import Literal, TypedDict
 from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
 from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
 from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
 
 load_dotenv()
-#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
+
+def _build_llm():
+	if os.getenv("OPENAI_API_KEY"):
+		return ChatOpenAI(model="gpt-5-mini", temperature=0)
+	return ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
+# ── 분류 스키마 ───────────────────────────────────────────────────────────────
+class QueryClassification(BaseModel):
+    category: Literal["criminal", "civil", "administrative", "family"] = Field(
+        description="분류된 카테고리"
+    )
+    reasoning: str = Field(description="해당 카테고리를 선택한 기술적 판단 근거")
+
+model = _build_llm()
 
 LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknown"]
 
-
+#-- State ─────────────────────────────────────────────────────────────────────
 class LegalSupportState(TypedDict, total=False):
 	user_query: str
 	query_category: LegalCategory
-	confidence: float
 	reasoning: str
+	answer: str
+	matched_docs: str
 
 
-
-
+#-- 노드 1: 질문 분류 ──────────────────────────────────────────────────────────
 def classify_legal_query(state: LegalSupportState) -> LegalSupportState:
 	"""사용자 질문을 형사/민사/행정/가정(가사)으로 분류하는 노드."""
-	query = state.get("user_query", "").strip()
-
-	if not query:
-		return {
-			"query_category": "unknown",
-			"confidence": 0.0,
-			"reasoning": "입력 질문이 비어 있습니다.",
-		}
-
+	classifier = model.with_structured_output(QueryClassification)
 	prompt = f"""
-            너는 한국 최고의 변호사이다.
-            아래 사용자 질문을 다음 4개 중 하나로만 분류해라:
-            - criminal: 형사
-            - civil: 민사
-            - administrative: 행정
-            - family: 가정/가사
+		너는 한국 최고의 변호사이다.
+		아래 사용자 질문을 다음 4개 중 하나로만 분류해라:
+		criminal: 형사
+		- civil: 민사
+		- administrative: 행정
+		- family: 가정/가사
 
+		사용자 질문:
+		{state['user_query']}
 
-            출력 형식:
-            category|confidence|reasoning
-
-            confidence는 0~1 숫자.
-
-            질문: {query}
-        """
-	raw = llm.invoke(prompt).content.strip()
-
-	parts = [p.strip() for p in raw.split("|", maxsplit=2)]
-	if len(parts) != 3:
-		return {
-			"query_category": "unknown",
-			"confidence": 0.0,
-			"reasoning": "출력 형식이 올바르지 않습니다. expected: category|confidence|reasoning",
-		}
-
-	category_raw, confidence_raw, reasoning = parts
-	category = category_raw.lower()
-	if category not in {"criminal", "civil", "administrative", "family"}:
-		category = "unknown"
-
-	confidence = float(confidence_raw)
-	confidence = max(0.0, min(1.0, confidence))
-
-	return {
-		"query_category": category,
-		"confidence": round(confidence, 2),
-		"reasoning": reasoning,
-	}
+		질문의 핵심 의도를 기준으로 가장 적합한 카테고리로 정확하게 분류하세요.
+		"""
+	result: QueryClassification = classifier.invoke(prompt)
+	print(f"  → 카테고리: {result.category}  |  근거: {result.reasoning}")
+	return {"query_category": result.category}
 
 
 def route_by_legal_category(state: LegalSupportState) -> str:
