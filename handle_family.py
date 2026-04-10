@@ -31,7 +31,7 @@ def handle_family(state: LegalSupportState) -> LegalSupportState:
 
     print("[실행] 가정/가사 전문 변호사 답변 생성 중...")
 
-    prompt = f"""
+    prompt =f"""
     당신은 20년 경력의 이혼 및 가사 사건 전문 대표 변호사입니다.
     아래 의뢰인의 가사 분쟁 상황을 분석하고, 검색된 [유사 판례]를 엄격히 근거로 삼아 전문적인 법률 상담을 제공해 주세요.
 

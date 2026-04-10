@@ -4,7 +4,6 @@ import time
 
 from test_langgraph import build_graph
 
-# 1. 새로 작성한 이메일 발송 함수 임포트
 from email_utils import send_legal_consultation_email
 
 def print_header() -> None:
@@ -21,7 +20,7 @@ def print_help() -> None:
     print("2) /samples 입력 시 샘플 질문 5개를 순서대로 실행합니다.")
     print("3) /exit 입력 시 종료합니다.")
 
-# 2. 일반 실행과 샘플 실행을 구분하기 위해 prompt_email 인자 추가
+
 def run_once(graph, query: str, prompt_email: bool = True) -> None:
     t0 = time.perf_counter()
     result = graph.invoke({"user_query": query})
@@ -49,7 +48,6 @@ def run_once(graph, query: str, prompt_email: bool = True) -> None:
     print(f"처리시간: {dt:.1f}ms")
     print("=" * 68)
 
-    # 3. 터미널 출력이 끝난 후 이메일 전송 여부 확인 로직
     if prompt_email:
         while True:
             send_mail = input("📧 이 상담 결과를 이메일로 받아보시겠습니까? (y/n): ").strip().lower()
@@ -61,7 +59,7 @@ def run_once(graph, query: str, prompt_email: bool = True) -> None:
                 topic_preview = query[:15] + "..." if len(query) > 15 else query
                 
                 # 이메일 본문에 들어갈 내용을 보기 좋게 HTML 태그와 함께 구성
-                # (email_utils.py에서 \n을 <br>로 바꿔주지만, 여기서 미리 구조를 잡아줍니다)
+                # (email_utils.py에서 \n을 <br>로 바꿔주지만, 여기서 미리 구조를 잡음)
                 report_content = f"""
                 <strong>[사용자 질문]</strong><br>{query}<br><br>
                 <strong>[분야 분류]</strong> {result.get('query_category')} (신뢰도: {result.get('confidence')})<br>
