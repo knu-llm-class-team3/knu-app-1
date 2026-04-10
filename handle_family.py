@@ -20,7 +20,7 @@ model = _build_model()
 
 
 
-def family_node(state: LegalSupportState) -> LegalSupportState:
+def handle_family(state: LegalSupportState) -> LegalSupportState:
     if not state.get('user_query', ''):
         return {
             "answer": "[가정/가사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
@@ -50,7 +50,6 @@ def family_node(state: LegalSupportState) -> LegalSupportState:
 
     어려운 법률 용어는 일반인인 의뢰인이 이해하기 쉽게 풀어서 설명하고, 전체적인 어조는 신뢰감을 주면서도 따뜻하고 단호하게 작성하세요.
     """
-    
 
     # model.invoke -> llm.invoke 로 변경 (이전 코드 블록 기준)
     response = model.invoke(prompt).content
