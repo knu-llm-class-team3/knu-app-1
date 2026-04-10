@@ -1,7 +1,11 @@
 from __future__ import annotations
+
 import time
+
 from test_langgraph import build_graph
 
+# email import
+from email_utils import send_legal_consultation_email
 
 def print_header() -> None:
     print("=" * 68)
@@ -18,7 +22,7 @@ def print_help() -> None:
     print("3) /exit 입력 시 종료합니다.")
 
 
-def run_once(graph, query: str) -> None:
+def run_once(graph, query: str, prompt_email: bool = True) -> None:
     t0 = time.perf_counter()
     result = graph.invoke({"user_query": query})
     dt = (time.perf_counter() - t0) * 1000
@@ -45,6 +49,45 @@ def run_once(graph, query: str) -> None:
     print(f"처리시간: {dt:.1f}ms")
     print("=" * 68)
 
+    if prompt_email:
+        while True:
+            send_mail = input("📧 이 상담 결과를 이메일로 받아보시겠습니까? (y/n): ").strip().lower()
+            
+            if send_mail == 'y':
+                to_email = input("받으실 이메일 주소를 입력하세요: ").strip()
+                
+                # 이메일 제목 생성을 위해 질문의 앞부분만 자르기
+                topic_preview = query[:15] + "..." if len(query) > 15 else query
+                
+                # 이메일 본문에 들어갈 내용을 보기 좋게 HTML 태그와 함께 구성
+                # (email_utils.py에서 \n을 <br>로 바꿔주지만, 여기서 미리 구조를 잡음)
+                report_content = f"""
+                <strong>[사용자 질문]</strong><br>{query}<br><br>
+                <strong>[분야 분류]</strong> {result.get('query_category')} (신뢰도: {result.get('confidence')})<br>
+                <strong>[분류 근거]</strong><br>{result.get('reasoning')}<br><br>
+                <strong>[관련 판례]</strong><br>{result.get('matched_docs')}<br><br>
+                <strong>[AI 상세 응답]</strong><br>{result.get('answer')}
+                """
+                
+                print("\n이메일을 전송하는 중입니다. 잠시만 기다려주세요...")
+                
+                email_result = send_legal_consultation_email(
+                    to_email=to_email,
+                    consultation_topic=topic_preview,
+                    report_content=report_content
+                )
+                
+                if email_result["success"]:
+                    print(f"✅ {email_result['message']}")
+                else:
+                    print(f"❌ 전송 실패: {email_result['error']}")
+                break
+                
+            elif send_mail == 'n':
+                break
+            else:
+                print("올바른 입력이 아닙니다. 'y' 또는 'n'을 입력해주세요.")
+
 
 def run_samples(graph) -> None:
     samples = [
@@ -55,7 +98,8 @@ def run_samples(graph) -> None:
         "법률 상담 받고 싶어요",
     ]
     for q in samples:
-        run_once(graph, q)
+        # 샘플 실행 중에는 이메일 전송을 묻지 않도록 False 처리
+        run_once(graph, q, prompt_email=False)
 
 
 def main() -> None:
@@ -83,6 +127,7 @@ def main() -> None:
             run_samples(graph)
             continue
 
+        # 일반 질문 실행 (기본적으로 prompt_email=True가 적용됨)
         run_once(graph, user_input)
 
 
