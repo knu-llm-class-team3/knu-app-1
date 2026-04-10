@@ -6,14 +6,14 @@ from config import _build_model
 model = _build_model()
 
 
-
 def handle_family(state: LegalSupportState) -> LegalSupportState:
-    if not state.get('user_query', ''):
+    user_query = state.get("user_query", "")
+    
+    if not user_query:
         return {
             "answer": "[가정/가사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
         }
 
-    user_query = state.get("user_query", "")
     matched_docs = retrieve_relevant_docs(category="가정/가사", query=user_query)
     print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
 
@@ -39,7 +39,6 @@ def handle_family(state: LegalSupportState) -> LegalSupportState:
     어려운 법률 용어는 일반인인 의뢰인이 이해하기 쉽게 풀어서 설명하고, 전체적인 어조는 신뢰감을 주면서도 따뜻하고 단호하게 작성하세요.
     """
 
-    # model.invoke -> llm.invoke 로 변경 (이전 코드 블록 기준)
     response = model.invoke(prompt).content
 
     print("가정/가사 전문 노드 답변 생성 완료!")
