@@ -20,6 +20,7 @@ class QueryClassification(BaseModel):
         description="분류된 카테고리"
     )
     reasoning: str = Field(description="해당 카테고리를 선택한 기술적 판단 근거")
+    confidence: float = Field(description="분류의 신뢰도 0~1 사이의 값")
 
 model = _build_llm()
 
@@ -29,6 +30,7 @@ LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknow
 class LegalSupportState(TypedDict, total=False):
 	user_query: str
 	query_category: LegalCategory
+	confidence: float
 	reasoning: str
 	answer: str
 	matched_docs: str
@@ -53,7 +55,9 @@ def classify_legal_query(state: LegalSupportState) -> LegalSupportState:
 		"""
 	result: QueryClassification = classifier.invoke(prompt)
 	print(f"  → 카테고리: {result.category}  |  근거: {result.reasoning}")
-	return {"query_category": result.category}
+	return {"query_category": result.category ,
+			"confidence": result.confidence,
+			"reasoning": result.reasoning}
 
 
 def route_by_legal_category(state: LegalSupportState) -> str:

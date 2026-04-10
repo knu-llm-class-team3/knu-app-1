@@ -25,6 +25,7 @@ def _load_documents()->List[Document]:
 def _get_embeddings():
     return OllamaEmbeddings(
         model="nomic-embed-text-v2-moe"
+        
     )
 
 # 임베딩된 벡터스토어 반환
