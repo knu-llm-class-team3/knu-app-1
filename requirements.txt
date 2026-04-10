@@ -6,3 +6,4 @@ langchain-community
 langchain-ollama
 dotenv
 faiss-cpu
+pydantic
