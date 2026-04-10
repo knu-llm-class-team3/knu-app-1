@@ -1,5 +1,35 @@
+from __future__ import annotations
+
+import os
+from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
+from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
+from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
+
+from vector_store import retrieve_relevant_docs
+from classify_query_node import LegalSupportState
+
+load_dotenv()
+
+def _build_model():
+    if os.getenv("OPENAI_API_KEY"):
+        return ChatOpenAI(model="gpt-5-mini", temperature=0)
+    return ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
+
+model = _build_model()
+
+
+
 def family_node(state: LegalSupportState) -> LegalSupportState:
-    print("[실행] 가사 전문 변호사 답변 생성 중...")
+    if not state.get('user_query', ''):
+        return {
+            "answer": "[가정/가사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
+        }
+
+    matched_docs = retrieve_relevant_docs(category="가정/가사", query=state.get('user_query', ''))
+    print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
+
+    print("[실행] 가정/가사 전문 변호사 답변 생성 중...")
 
     prompt =
     f"""
@@ -10,7 +40,7 @@ def family_node(state: LegalSupportState) -> LegalSupportState:
     {state.get('user_query', '')}
 
     [검색된 유사 판례 (답변의 핵심 근거)]
-    {state.get('matched_precedent', '')}
+    {state.get('matched_docs', '')}
 
     반드시 다음 내용을 포함하여 단계별로 답변하세요:
 
@@ -23,10 +53,11 @@ def family_node(state: LegalSupportState) -> LegalSupportState:
     """
 
     # model.invoke -> llm.invoke 로 변경 (이전 코드 블록 기준)
-    response = llm.invoke(prompt).content
+    response = model.invoke(prompt).content
 
-    print("가사 전문 노드 답변 생성 완료!")
+    print("가정/가사 전문 노드 답변 생성 완료!")
 
     return {
         "response": response,
+        "matched_docs": matched_docs
     }
