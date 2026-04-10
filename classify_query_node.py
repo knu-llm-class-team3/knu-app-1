@@ -26,6 +26,7 @@ class LegalSupportState(TypedDict, total=False):
 	confidence: float
 	reasoning: str
 	answer: str
+	matched_docs: str
 
 
 

@@ -30,6 +30,7 @@ def run_once(graph, query: str) -> None:
     print(f"분류: {result.get('query_category')}")
     print(f"신뢰도: {result.get('confidence')}")
     print(f"근거: {result.get('reasoning')}")
+    print(f"검색 판례: {result.get('matched_docs')}")
     print(f"응답: {result.get('answer')}")
     print(f"처리시간: {dt:.1f}ms")
     print("-" * 68)

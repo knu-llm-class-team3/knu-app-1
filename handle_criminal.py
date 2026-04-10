@@ -55,4 +55,5 @@ def handle_criminal(state: LegalSupportState) -> LegalSupportState:
 
     return {
         "answer": response,
+        "matched_docs": matched_docs,
     }
