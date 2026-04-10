@@ -25,6 +25,7 @@ class LegalSupportState(TypedDict, total=False):
 	query_category: LegalCategory
 	confidence: float
 	reasoning: str
+	answer: str
 
 
 

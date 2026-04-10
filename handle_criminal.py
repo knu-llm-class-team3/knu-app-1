@@ -19,7 +19,7 @@ def _build_model():
 
 model = _build_model()
 
-def handle_criminal(state: LegalSupportState):
+def handle_criminal(state: LegalSupportState) -> LegalSupportState:
     print("🚨 형사 사건 문제를 처리합니다. 관련 판례를 검색 중입니다...")
     user_query = state.get("user_query", "")
 
