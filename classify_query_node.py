@@ -6,7 +6,7 @@ from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
 from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
 
 load_dotenv()
-#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+#llm = ChatOpenAI(model="gpt-5-mini", temperature=0)
 llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0)
 
 LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknown"]
