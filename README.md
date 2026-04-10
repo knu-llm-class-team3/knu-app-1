@@ -9,19 +9,19 @@ LLM은 환경 변수에 따라 OpenAI 또는 Groq 모델을 사용하고, 임베
 터미널 UI를 통해 질의, 샘플 실행, 결과 확인까지 한 번에 테스트할 수 있도록 구성되어 있습니다.
 
 # 프로젝트 기술 스택
-Python 3
-LangChain
-LangGraph
-LangChain OpenAI
-LangChain Groq
-LangChain Community (CSVLoader, FAISS VectorStore)
-LangChain Ollama (OllamaEmbeddings)
-FAISS (faiss-cpu)
-python-dotenv (dotenv)
-Pydantic
-Ollama 모델: nomic-embed-text-v2-moe
-LLM 모델: OpenAI gpt-5-mini 또는 Groq openai/gpt-oss-20b
-Docker 
+- Python 3
+- LangChain
+- LangGraph
+- LangChain OpenAI
+- LangChain Groq
+- LangChain Community (CSVLoader, FAISS VectorStore)
+- LangChain Ollama (OllamaEmbeddings)
+- FAISS (faiss-cpu)
+- python-dotenv (dotenv)
+- Pydantic
+- Ollama 모델: nomic-embed-text-v2-moe
+- LLM 모델: OpenAI gpt-5-mini 또는 Groq openai/gpt-oss-20b
+- Docker 
 # 프로젝트에서 잘한 점
 
 # 프로젝트에서 아쉬운 점
