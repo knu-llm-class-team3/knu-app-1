@@ -26,7 +26,8 @@ def handle_family(state: LegalSupportState) -> LegalSupportState:
             "answer": "[가정/가사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
         }
 
-    matched_docs = retrieve_relevant_docs(category="가정/가사", query=state.get('user_query', ''))
+    user_query = state.get("user_query", "")
+    matched_docs = retrieve_relevant_docs(category="가정/가사", query=user_query)
     print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
 
     print("[실행] 가정/가사 전문 변호사 답변 생성 중...")
@@ -36,10 +37,10 @@ def handle_family(state: LegalSupportState) -> LegalSupportState:
     아래 의뢰인의 가사 분쟁 상황을 분석하고, 검색된 [유사 판례]를 엄격히 근거로 삼아 전문적인 법률 상담을 제공해 주세요.
 
     [의뢰인 질문]
-    {state.get('user_query', '')}
+    {user_query}
 
     [검색된 유사 판례 (답변의 핵심 근거)]
-    {state.get('matched_docs', '')}
+    {matched_docs}
 
     반드시 다음 내용을 포함하여 단계별로 답변하세요:
 
@@ -57,6 +58,6 @@ def handle_family(state: LegalSupportState) -> LegalSupportState:
     print("가정/가사 전문 노드 답변 생성 완료!")
 
     return {
-        "response": response,
+        "answer": response,
         "matched_docs": matched_docs
     }

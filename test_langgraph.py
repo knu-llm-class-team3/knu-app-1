@@ -4,7 +4,9 @@ from pprint import pprint
 from langgraph.graph import END, START, StateGraph
 from classify_query_node import LegalSupportState, classify_legal_query, route_by_legal_category
 from handle_criminal import handle_criminal
+from handle_civil import handle_civil
 from handle_administrative import handle_administrative
+from handle_family import handle_family
 
 
 def criminal_node(state: LegalSupportState) -> LegalSupportState:
@@ -16,20 +18,26 @@ def criminal_node(state: LegalSupportState) -> LegalSupportState:
 
 
 def civil_node(state: LegalSupportState) -> LegalSupportState:
+    result = handle_civil(state)
     return {
-        "answer": f"[민사 노드] 질문 접수: {state.get('user_query', '')}",
+        "answer": result.get("answer", "[민사 노드] 답변 생성에 실패했습니다."),
+        "matched_docs": result.get("matched_docs", ""),
     }
 
 
 def administrative_node(state: LegalSupportState) -> LegalSupportState:
+    result = handle_administrative(state)
     return {
-        "answer": f"[행정 노드] 질문 접수: {state.get('user_query', '')}",
+        "answer": result.get("answer", "[행정 노드] 답변 생성에 실패했습니다."),
+        "matched_docs": result.get("matched_docs", ""),
     }
 
 
 def family_node(state: LegalSupportState) -> LegalSupportState:
+    result = handle_family(state)
     return {
-        "answer": f"[가정/가사 노드] 질문 접수: {state.get('user_query', '')}",
+        "answer": result.get("answer", "[가정/가사 노드] 답변 생성에 실패했습니다."),
+        "matched_docs": result.get("matched_docs", ""),
     }
 
 
