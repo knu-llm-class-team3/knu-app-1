@@ -18,17 +18,17 @@ def _build_model():
 
 model = _build_model()
 
-def handle_civil(state: LegalSupportState):
+def handle_civil(state: LegalSupportState) -> LegalSupportState:
 
     print(" 민사 사건 문제를 처리합니다. 관련 판례를 검색 중입니다...")
     user_query = state.get("user_query", "")
 
     if not user_query:
         return {
-            "answer": "[행정 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
+            "answer": "[민사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
         }
 
-    matched_docs = retrieve_relevant_docs(category="형사", query=user_query)
+    matched_docs = retrieve_relevant_docs(category="민사", query=user_query)
     print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
 
     prompt = f"""
@@ -40,7 +40,7 @@ def handle_civil(state: LegalSupportState):
         [검색된 유사 판례 (답변의 핵심 근거)]
         {matched_docs}
         [의뢰인 질문]
-        {state['user_query']}
+        {user_query}
 
         [답변 작성 지침]
         1. 핵심 요약: 질문에 대한 명확한 핵심 답변을 첫 문단에 짧게 제시하세요.
@@ -52,6 +52,6 @@ def handle_civil(state: LegalSupportState):
     result = model.invoke(prompt).content
 
     return {
-        "response": result,
+        "answer": result,
         "matched_docs": matched_docs,
     }
