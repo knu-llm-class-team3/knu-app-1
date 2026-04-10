@@ -1,6 +1,8 @@
 # knu-app-1
 프로젝트 개요 및 설명
 
+docker - ollama - nomic-embed-text-v2-moe 실행 필요
+
 # 프로젝트 기술 스택
 
 # 프로젝트에서 잘한 점

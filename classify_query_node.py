@@ -1,13 +1,21 @@
 from __future__ import annotations
 
+import os
 from typing import Literal, TypedDict
 from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
 from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
 from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
 
 load_dotenv()
-#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
+
+def _build_llm():
+	if os.getenv("OPENAI_API_KEY"):
+		return ChatOpenAI(model="gpt-5-mini", temperature=0)
+	return ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
+
+llm = _build_llm()
 
 LegalCategory = Literal["criminal", "civil", "administrative", "family", "unknown"]
 
@@ -17,6 +25,7 @@ class LegalSupportState(TypedDict, total=False):
 	query_category: LegalCategory
 	confidence: float
 	reasoning: str
+	answer: str
 
 
 
