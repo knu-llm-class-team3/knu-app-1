@@ -7,6 +7,7 @@ from pprint import pprint
 from langgraph.graph import END, START, StateGraph
 
 from classify_query_node import classify_legal_query, route_by_legal_category
+from handle_criminal import handle_criminal
 
 
 class AgentState(TypedDict, total=False):
@@ -18,8 +19,9 @@ class AgentState(TypedDict, total=False):
 
 
 def criminal_node(state: AgentState) -> AgentState:
+    result = handle_criminal(state)
     return {
-        "answer": f"[형사 노드] 질문 접수: {state.get('user_query', '')}",
+        "answer": result.get("answer", "[형사 노드] 답변 생성에 실패했습니다."),
     }
 
 

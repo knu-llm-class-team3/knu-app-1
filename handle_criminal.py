@@ -1,9 +1,24 @@
+from __future__ import annotations
+
+from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
+from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
+
 from vector_store import retrieve_relevant_docs
 from classify_query_node import LegalSupportState
 
+load_dotenv()
+model = ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+
 def handle_criminal(state: LegalSupportState):
     print("🚨 형사 사건 문제를 처리합니다. 관련 판례를 검색 중입니다...")
-    matched_docs = retrieve_relevant_docs(category="형사", query=state.get("user_query", ""))    
+    user_query = state.get("user_query", "")
+
+    if not user_query:
+        return {
+            "answer": "[형사 노드] 질문이 비어 있어 분석을 진행할 수 없습니다.",
+        }
+
+    matched_docs = retrieve_relevant_docs(category="형사", query=user_query)
     print("🔍 검색된 판례 데이터를 기반으로 답변을 생성합니다.")
 
     prompt = f"""
@@ -11,7 +26,7 @@ def handle_criminal(state: LegalSupportState):
     아래 의뢰인의 형사 사건 연루 상황을 분석하고, 검색된 [유사 판례]를 엄격히 근거로 삼아 전문적인 법률 상담을 제공해 주세요.
 
     [의뢰인 질문]
-    {state['user_query']}
+    {user_query}
 
     [검색된 유사 판례 (답변의 핵심 근거)]
     {matched_docs}
@@ -29,5 +44,5 @@ def handle_criminal(state: LegalSupportState):
     response = model.invoke(prompt).content
 
     return {
-        "response": response,
+        "answer": response,
     }
