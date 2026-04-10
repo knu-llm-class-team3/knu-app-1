@@ -1,7 +1,4 @@
 from __future__ import annotations
-from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
-from langchain_openai import ChatOpenAI  # pyright: ignore[reportMissingImports]
-from langchain_groq import ChatGroq  # pyright: ignore[reportMissingImports]
 from vector_store import retrieve_relevant_docs
 from classify_query_node import LegalSupportState
 from config import _build_model
