@@ -2,4 +2,8 @@ langchain
 langgraph
 langchain-openai
 langchain-groq
+langchain-community
+langchain-ollama
 dotenv
+faiss-cpu
+pydantic
